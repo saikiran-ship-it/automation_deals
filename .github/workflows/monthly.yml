@@ -1,1 +1,30 @@
+name: Run monthly_new_deals
 
+on:
+  workflow_dispatch:
+    inputs:
+      run_month:
+        description: "Optional YYYY-MM label"
+        required: false
+        default: ""
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    env:
+      GCP_SA_JSON: ${{ secrets.GCP_SA_JSON }}   # <-- makes it available to Python
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Execute script
+        run: |
+          python automation_deals/monthly_new_deals.py
